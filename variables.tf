@@ -11,7 +11,6 @@ variable "prefix" {
 
 variable "my_ip" {
   type        = string
-  default     = "80.3.58.89"
   description = "IP that will be allowed through the NSG"
 }
 

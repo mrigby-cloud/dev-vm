@@ -38,7 +38,7 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
     priority                   = 1000
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "RDP"
+    protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "3389"
     source_address_prefix      = var.my_ip
@@ -92,14 +92,36 @@ resource "azurerm_windows_virtual_machine" "main" {
 
 }
 
+resource "azurerm_virtual_machine_extension" "chocolatey" {
+  name                 = "hostname"
+  virtual_machine_id   = azurerm_windows_virtual_machine.main.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "commandToExecute": "powershell.exe -Command \"./chocolatey.ps1; exit 0;\""
+    }
+  PROTECTED_SETTINGS
+
+  settings = <<SETTINGS
+    {
+        "fileUris": [
+          "https://raw.githubusercontent.com/mrigby-cloud/dev-vm/main/chocolatey.ps1"
+        ]
+    }
+    SETTINGS
+}
+
 
 resource "random_password" "password" {
-  length      = 20
+  length      = 10
   min_lower   = 1
   min_upper   = 1
   min_numeric = 1
-  min_special = 1
-  special     = true
+  min_special = 0
+  special     = false
 }
 
 resource "random_pet" "prefix" {
