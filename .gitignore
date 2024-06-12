@@ -4,6 +4,9 @@
 *.tfstate.lock.info
 *.terraform.lock.hcl
 
+#Executables
+*.exe
+
 # logs
 *.log
 
